@@ -10,7 +10,7 @@ export default function AuthButtonClient(){
     const session = useSession();
 
     return session?.data?.user ? (
-        <Button color="primary" variant="flat" onClick={async ()=> {
+        <Button color="success" variant="flat" onClick={async ()=> {
             await signOut();
             await signIn();
         }}>

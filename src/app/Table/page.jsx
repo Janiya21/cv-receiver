@@ -43,7 +43,7 @@ const TableUI = () => {
   }, []);
 
   return (
-    <Table aria-label="Example table with dynamic content">
+    <Table style={{backgroundColor:"rgb(226 255 231)"}} aria-label="Example table with dynamic content">
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>

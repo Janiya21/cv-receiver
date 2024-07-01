@@ -1,38 +1,36 @@
 import mongoose, {Document, Schema} from "mongoose";
 
 export interface IVacancy extends Document{
-    id: string;
-    role: string;
-    sub: string;
+    position: string;
+    title: string;
     status: string;
     createDate: string;
+    endDate: string;
     description: string;
+    location:string;
 }
 
 const vacancySchema: Schema = new Schema({
-    id:{
+    position:{
         type:String,
-        required: true
     },
-    role:{
+    title:{
         type:String,
-        required: true
-    },
-    sub:{
-        type:String,
-        required: true
     },
     status:{
         type:String,
-        required: true
     },
     createDate:{
         type:String,
-        required: true
+    },
+    endDate:{
+        type:String,
     },
     description:{
         type:String,
-        required: true
+    },
+    location:{
+        type:String,
     }
 })
 

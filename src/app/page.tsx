@@ -1,27 +1,39 @@
-import { auth } from "@/auth";
-import AuthButton from "./AuthButton.server";
+// /app/page.jsx
 import TableUI from "./Table/page";
+import TableVacancy from "./TableVacancy/page";
 import NavBarUI from "./navbar/page";
 import PositionForm from "./position-form/page";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import VacanciesContent from "../components/ui/VacanciesContent";
 
-
-export default async function Home() {
+export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col justify-between py-8 px-16">
-      <NavBarUI />
-      <hr className="text-white bg-white"></hr>
-      <div className="grid grid-cols-2">
-        <h1 className="text-xl">VACANCIES</h1>
-        <div className="flex justify-end">
-          <PositionForm />
+    <main style={{ backgroundColor: "rgb(241 241 241);", backgroundImage: "url('fgg.png')", backgroundRepeat: "no-repeat", backgroundSize: "cover" }} className="min-h-screen py-8 px-32">
+      <div className="bg-gray-50 px-10 py-5 border-1" style={{borderRadius: "20px" }}>
+        <NavBarUI />
+        {/* <hr className="custom-hr ms-5" /> */}
+        <div className="py-6">
+          <div className="mt-5">
+            <div className="flex w-full flex-col">
+              <Tabs defaultValue="account" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="positions">POSITIONS</TabsTrigger>
+                  <TabsTrigger value="vacancies">VACANCIES</TabsTrigger>
+                </TabsList>
+                <TabsContent value="positions">
+                  <div className="flex justify-end my-4">
+                    <PositionForm />
+                  </div>
+                  <TableUI />
+                </TabsContent>
+                <TabsContent value="vacancies">
+                  <VacanciesContent />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mt-5">
-         <TableUI  />
-      </div>
-      {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
     </main>
   );
 }
-
-
