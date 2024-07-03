@@ -1,55 +1,63 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
-import { Button, DateValue, Input } from "@nextui-org/react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Button, DateValue, Input, DatePicker, Chip } from "@nextui-org/react";
 import ReactQuill from "react-quill";
-import Select from 'react-select';
+import Select, { MultiValue, SingleValue } from 'react-select';
 import "react-quill/dist/quill.snow.css";
 import geoData from "../../../public/cities-by-district.json";
-import {DatePicker} from "@nextui-org/react";
-import {Chip} from "@nextui-org/react";
-
-interface CityData {
-  cities: string[];
-}
-
-interface Data {
-  [key: string]: CityData;
-}
-
-const data: Data = geoData;
+import { useRouter } from "next/navigation"; 
 
 interface Option {
   value: string;
   label: string;
 }
 
+const locationsData: Option[] = Object.values(geoData).flatMap((district: { cities: string[] }) =>
+  district.cities.map((city) => ({ value: city, label: city }))
+);
+
 export default function VacancyForm() {
-  const [district, setDistrict] = useState<Option | null>(null);
-  const [city, setCity] = useState<Option | null>(null);
-  const [position, setPosition] = useState("");
+  const router = useRouter();
+  
+  const [locations, setLocations] = useState<MultiValue<Option>>([]);
+  const [positions, setPositions] = useState<Option[]>([]);
+  const [selectedPosition, setSelectedPosition] = useState<SingleValue<Option>>(null);
   const [status, setStatus] = useState("active");
-  const [startDate, setStartDate] = useState(getCurrentDate);
+  const [createDate, setCreateDate] = useState(getCurrentDate());
   const [endDate, setEndDate] = useState<DateValue | null>(null);
-  const [endStr, setEdStr] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const districtOptions: Option[] = Object.keys(data).map(district => ({ value: district, label: district }));
+  useEffect(() => {
+    const fetchPositions = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/position");
+        const data = await response.json();
+        const positionOptions = data.map((position: { _id: string; name: string }) => ({
+          value: position._id,
+          label: position.name,
+        }));
+        setPositions(positionOptions);
+      } catch (error) {
+        console.error("Error fetching positions:", error);
+      }
+    };
 
-  const cityOptions: Option[] = district ? data[district.value].cities.map(city => ({ value: city, label: city })) : [];
+    fetchPositions();
+  }, []);
 
   const convertToStr = (dateValue: DateValue | null): string => {
-    return dateValue?.month + "/" + dateValue?.day + "/" + dateValue?.year;
+    return dateValue ? `${dateValue.month}/${dateValue.day}/${dateValue.year}` : "";
   };
-  
+
   const handleSubmit = async () => {
     const positionData = {
-      location: `${city?.label}, ${district?.label}`,
+      location: locations.map(loc => loc.label),
       description,
       title,
-      position,
+      position: selectedPosition?.value || "",
       status,
-      startDate,
+      createDate,
       endDate: convertToStr(endDate)
     };
 
@@ -69,6 +77,7 @@ export default function VacancyForm() {
       }
 
       console.log("Position created successfully:", await response.json());
+      router.push("/");
     } catch (error) {
       console.error("Error creating position:", error);
     }
@@ -79,7 +88,6 @@ export default function VacancyForm() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
-  
     return `${month}/${day}/${year}`;
   }
 
@@ -95,22 +103,14 @@ export default function VacancyForm() {
     <>
       <div style={{ borderRadius: "20px" }} className="mx-10 bg-white border-1 border-green-500">
         <div className="flex flex-col gap-2 mx-20 pb-10 pt-5">
-
-          <Chip color="success" variant="dot" className="mb-4 text-xl font-bold px-3 py-4">ADD VACANCY</Chip>
+          <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">ADD VACANCY</Chip>
           <Select
+            isMulti
             className="z-40"
-            placeholder="Select District"
-            options={districtOptions}
-            value={district}
-            onChange={setDistrict}
-          />
-          <Select
-            className="z-30"
-            placeholder="Select City"
-            options={cityOptions}
-            value={city}
-            onChange={setCity}
-            isDisabled={!district}
+            placeholder="Select Locations"
+            options={locationsData}
+            value={locations}
+            onChange={(newValue) => setLocations(newValue)}
           />
           <Input
             label="Title"
@@ -119,18 +119,12 @@ export default function VacancyForm() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <Input
-            label="Position"
-            placeholder="Enter Position"
-            variant="bordered"
-            value={position}
-            onChange={(e) => setPosition(e.target.value)}
+          <Select
+            placeholder="Select Position"
+            options={positions}
+            value={selectedPosition}
+            onChange={(newValue) => setSelectedPosition(newValue)}
           />
-          {/* <DatePicker
-            selected={endDate}
-            onChange={(date: Date | null) => setEndDate(date)}
-            dateFormat="MM/dd/yyyy"
-          /> */}
           <DatePicker
             label="End Date"
             className="border-1"
@@ -144,13 +138,12 @@ export default function VacancyForm() {
             theme="snow"
             value={description}
             onChange={setDescription}
-          ></ReactQuill>
-          <Button color="primary" onPress={handleSubmit}>
-            Create
-          </Button>
-          <Button color="success" variant="flat">
-            Close
-          </Button>
+          />
+          <div className="flex justify-center mt-4">
+            <Button className="w-1/3 text-white font-bold" color="success" onPress={handleSubmit}>
+              Create
+            </Button>
+          </div>
         </div>
       </div>
     </>

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
 
-export default function PositionForm() {
+export default function ApplicantForm() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -38,7 +38,7 @@ export default function PositionForm() {
     <>
       {/* <Button onPress={onOpen} color="primary" variant="bordered">Create Position</Button> */}
       <Button color="primary" variant="light" onPress={onOpen}>
-          + Create Position
+          + Create Applicant
       </Button>
       <Modal 
         isOpen={isOpen} 

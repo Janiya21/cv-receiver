@@ -1,19 +1,20 @@
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, {Document, ObjectId, Schema} from "mongoose";
+import Position from "./Position";
+import Applicant from "./Applicant";
 
 export interface IVacancy extends Document{
-    position: string;
+    position: mongoose.Schema.Types.ObjectId;
     title: string;
     status: string;
     createDate: string;
     endDate: string;
     description: string;
-    location:string;
+    location:string[];
+    applicants: mongoose.Schema.Types.ObjectId[];
 }
 
 const vacancySchema: Schema = new Schema({
-    position:{
-        type:String,
-    },
+    position: { type: mongoose.Schema.Types.ObjectId, ref: "Position" },
     title:{
         type:String,
     },
@@ -30,8 +31,12 @@ const vacancySchema: Schema = new Schema({
         type:String,
     },
     location:{
-        type:String,
-    }
+        type:[String],
+    },
+    applicants: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Applicant',
+    }],
 })
 
 const Vacancy = mongoose.models.Vacancy || mongoose.model<IVacancy>('Vacancy', vacancySchema);

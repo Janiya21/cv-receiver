@@ -1,58 +1,57 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
-import VacancyAlt from "../vacancy-alt/page";
+// import VacancyAlt from "../vacancy-alt/page";
 
 const columns = [
   {
-    key: "title",
-    label: "TITLE",
+    key: "email",
+    label: "EMAIL",
   },
   {
-    key: "position",
-    label: "POSITION",
+    key: "firstName",
+    label: "FIRST NAME",
   },
   {
-    key: "status",
-    label: "STATUS",
+    key: "lastName",
+    label: "LAST NAME",
   },
   {
-    key: "endDate",
-    label: "END DATE",
+    key: "location",
+    label: "LOCATION",
   },
   {
-    key: "action",
-    label: "ACTION",
+    key: "phoneNo",
+    label: "MOBILE",
   }
 ];
 
-const TableVacancy = () => {
+const TableApplicanty = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const positionsRes = await fetch("http://localhost:3000/api/vacancy");
-        if (!positionsRes.ok) {
-          throw new Error(`HTTP error! status: ${positionsRes.status}`);
+        const applicantRes = await fetch("http://localhost:3000/api/applicant");
+        if (!applicantRes.ok) {
+          throw new Error(`HTTP error! status: ${applicantRes.status}`);
         }
-        const positionsData = await positionsRes.json();
-        console.log("Vacancy data:", positionsData);
+        const applicationData = await applicantRes.json();
+        console.log("Application data:", applicationData);
 
-        const formattedRows = positionsData.map((position, index) => ({
+        const formattedRows = applicationData.map((applicant, index) => ({
           key: `${index + 1}`, 
-          title: position.title,
-          endDate: position.endDate,
-          status: position.status,
-          createDate: position.createDate,
-          position: position.position._id,
-          location: position.location,
-          description: position.description
+          email: applicant.email,
+          firstName: applicant.firstName,
+          lastName: applicant.lastName,
+          location: applicant.location,
+          phoneNo: applicant.phoneNo,
+          vacancy:applicant.vacancy
         }));
 
         setRows(formattedRows);
       } catch (error) {
-        console.error('Error fetching Vacancy:', error);
+        console.error('Error fetching Applicant:', error);
       }
     };
 
@@ -86,4 +85,4 @@ const TableVacancy = () => {
   );
 };
 
-export default TableVacancy;
+export default TableApplicanty;

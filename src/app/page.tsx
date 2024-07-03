@@ -1,10 +1,11 @@
 // /app/page.jsx
 import TableUI from "./Table/page";
-import TableVacancy from "./TableVacancy/page";
+import TableApplicant from "./TableApplicant/page";
 import NavBarUI from "./navbar/page";
 import PositionForm from "./position-form/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import VacanciesContent from "../components/ui/VacanciesContent";
+import ApplicantForm from "./applicant-form/page";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
                 <TabsList>
                   <TabsTrigger value="positions">POSITIONS</TabsTrigger>
                   <TabsTrigger value="vacancies">VACANCIES</TabsTrigger>
+                  <TabsTrigger value="applicants">APPLICANTS</TabsTrigger>
                 </TabsList>
                 <TabsContent value="positions">
                   <div className="flex justify-end my-4">
@@ -28,6 +30,12 @@ export default function Home() {
                 </TabsContent>
                 <TabsContent value="vacancies">
                   <VacanciesContent />
+                </TabsContent>
+                <TabsContent value="applicants">
+                  <div className="flex justify-end my-4">
+                    {/* <ApplicantForm /> */}
+                  </div>
+                  <TableApplicant />
                 </TabsContent>
               </Tabs>
             </div>

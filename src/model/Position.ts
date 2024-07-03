@@ -16,6 +16,6 @@ const positionSchema: Schema = new Schema({
     }
 });
 
-const Position = mongoose.models.Position || mongoose.model<IPosition>("Position", positionSchema);
+const Position = mongoose.models.Position || mongoose.model("Position", positionSchema);
 
 export default Position;
