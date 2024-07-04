@@ -61,13 +61,13 @@ const VacancyAlt: React.FC<VacancyAltProps> = ({ item }) => {
                 </CardBody>
                 <Divider/>
                 <CardFooter>
-                  <Link
+                  {/* <Link
                     isExternal
                     showAnchorIcon
                     href="https://careers.senfin.com/careers.html"
                   >
                     Visit to Site
-                  </Link>
+                  </Link> */}
                 </CardFooter>
               </Card>
               </ModalBody>

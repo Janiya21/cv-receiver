@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import VacancyForm from "../../app/vacancy-form/page"; 
 import TableVacancy from "../../app/TableVacancy/page"; 
-import { Button } from "@nextui-org/react";
+import { Button, Chip } from "@nextui-org/react";
 
 export default function VacanciesContent() {
   const [showVacancyForm, setShowVacancyForm] = useState(false);
@@ -24,6 +24,7 @@ export default function VacanciesContent() {
             {showVacancyForm ? "<< Back" : "+ Create Vacancy"}
         </Button>
       </div>
+      <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">ALL VACANCIES</Chip>
       {showVacancyForm ? <VacancyForm /> : <TableVacancy />}
     </div>
   );

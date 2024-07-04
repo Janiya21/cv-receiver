@@ -19,7 +19,6 @@ const authOptions: NextAuthConfig = {
               password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-              // Validate credentials with your database here
               const user = {
                 id: "1",
                 name: "Admin",
@@ -87,9 +86,6 @@ const authOptions: NextAuthConfig = {
     ],
     basePath: BASE_PATH,
     secret: process.env.EXTAUTH_SECRET,
-    // pages: {
-    //     signIn: "/signin",
-    //   }
 }
 
 export const {handlers, auth, signIn, signOut} = NextAuth(authOptions);
