@@ -1,11 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PositionForm() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const { toast } = useToast();
 
   const handleSubmit = async () => {
     const positionData = {
@@ -26,9 +28,12 @@ export default function PositionForm() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Handle successful response
+      toast({
+        description: "Position Created Successfully!",
+        variant: "default",
+      });
       console.log("Position created successfully:", await response.json());
-      // onOpenChange(false); // Close the modal
+      onOpenChange(); // Close the modal
     } catch (error) {
       console.error("Error creating position:", error);
     }

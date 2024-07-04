@@ -24,7 +24,7 @@ export default function VacanciesContent() {
             {showVacancyForm ? "<< Back" : "+ Create Vacancy"}
         </Button>
       </div>
-      <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">ALL VACANCIES</Chip>
+      
       {showVacancyForm ? <VacancyForm /> : <TableVacancy />}
     </div>
   );

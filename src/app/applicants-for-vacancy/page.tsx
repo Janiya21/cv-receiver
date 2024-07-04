@@ -25,8 +25,9 @@ function ApplicantsForVacancy({ item }: { item: VacancyItem[] }) {
 
   return (
     <div>
-      <Button className="bg-transparent" onPress={onOpen} isIconOnly>
-        <Avatar src="https://www.svgrepo.com/show/192244/man-user.svg" />
+      <Button className="bg-transparent w-20" onPress={onOpen} isIconOnly>
+        <Avatar className="" src="https://www.svgrepo.com/show/192244/man-user.svg" />
+        <span className="ms-3"> {applicants.length}</span>
       </Button>
       <Modal
         isOpen={isOpen}

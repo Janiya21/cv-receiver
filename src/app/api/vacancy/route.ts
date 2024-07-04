@@ -48,3 +48,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Error creating Vacancy' }, { status: 500 });
     }
   }
+
+  export async function PATCH(req: NextRequest) {
+    try {
+      await dbConnect();
+      const { id, status } = await req.json();
+  
+      if (!id || !status) {
+        return NextResponse.json({ error: 'ID and status are required' }, { status: 400 });
+      }
+  
+      const updatedVacancy = await Vacancy.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true }
+      );
+  
+      if (!updatedVacancy) {
+        return NextResponse.json({ error: 'Vacancy not found' }, { status: 404 });
+      }
+  
+      return NextResponse.json(updatedVacancy, { status: 200 });
+    } catch (error) {
+      console.error('Error updating Vacancy:', error);
+      return NextResponse.json({ error: 'Error updating Vacancy' }, { status: 500 });
+    }
+  }

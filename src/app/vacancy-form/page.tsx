@@ -6,6 +6,7 @@ import Select, { MultiValue, SingleValue } from 'react-select';
 import "react-quill/dist/quill.snow.css";
 import geoData from "../../../public/cities-by-district.json";
 import { useRouter } from "next/navigation"; 
+import { useToast } from "@/components/ui/use-toast";
 
 interface Option {
   value: string;
@@ -27,6 +28,7 @@ export default function VacancyForm() {
   const [endDate, setEndDate] = useState<DateValue | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchPositions = async () => {
@@ -76,10 +78,14 @@ export default function VacancyForm() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      console.log("Position created successfully:", await response.json());
-      router.push("/");
+      console.log("Vacancy created successfully:", await response.json());
+      toast({
+        description: "Vacancy Created Successful!",
+        variant: "default",
+      });
+      window.location.reload();
     } catch (error) {
-      console.error("Error creating position:", error);
+      console.error("Error creating Vacancy:", error);
     }
   };
 

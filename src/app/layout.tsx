@@ -4,6 +4,7 @@ import "./globals.css";
 import { Inter as FontSans } from "next/font/google"
 import { cn } from "@/lib/utils";
 import {NextUIProvider} from '@nextui-org/react'
+import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,8 +29,9 @@ export default function RootLayout({ children }: Readonly<{children: React.React
       >
             <NextUIProvider>
             {children}
+            
             </NextUIProvider>
-        
+            <Toaster />
       </body>
     </html>
   )

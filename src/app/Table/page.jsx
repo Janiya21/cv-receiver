@@ -14,6 +14,10 @@ const columns = [
     label: "DESCRIPTION",
   },
   {
+    key: "status",
+    label: "STATUS",
+  },
+  {
     key: "actions",
     label: "ACTIONS",
   }
@@ -40,7 +44,6 @@ const TableUI = () => {
       console.log("Positions data:", positionsData);
 
       const formattedRows = positionsData
-        .filter(position => position.status === "active")
         .map((position, index) => ({
           key: position._id,
           name: position.name,
@@ -116,11 +119,13 @@ const TableUI = () => {
               {(columnKey) => (
                 <TableCell>
                   {columnKey === "actions" ? (
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    <div  style={{ display: item["status"] === "active" ? 'flex' : 'none', gap: '8px' }}>
                       <Button className="bg-transparent border-green-400 border-2" auto light onClick={() => handleEdit(item.key)} ><FontAwesomeIcon icon={faEdit} /></Button>
                       <Button className="bg-transparent border-red-300 border-2" auto light onClick={() => handleShowConfirmation(item.key)} ><FontAwesomeIcon icon={faTrashAlt} /></Button>
                     </div>
-                  ) : (
+                  ) :  columnKey === "status" ? (    
+                    <Chip style={{ backgroundColor: item[columnKey] === "active" ? '#8FFF94' : '#FF7C7C  ' }}>{item[columnKey]}</Chip>
+                  ): (
                     item[columnKey]
                   )}
                 </TableCell>

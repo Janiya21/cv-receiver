@@ -10,7 +10,7 @@ interface VacancyItem {
   status: string;
   createDate: string;
   position: string;
-  location: string;
+  location: string[];
   description:string;
 }
 
@@ -41,13 +41,20 @@ const VacancyAlt: React.FC<VacancyAltProps> = ({ item }) => {
                     alt="nextui logo"
                     height={40}
                     radius="sm"
-                    src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                    src="https://static.thenounproject.com/png/2043816-200.png"
                     width={40}
                   />
-                  <div className="grid grid-cols-2 gap-10 ms-5">
+                  <div className="grid grid-cols-2 gap-44 ms-5">
                     <div className="flex flex-col">
                       <p className="text-md"> {item.title}</p>
-                      <p className="text-small text-default-500">{item.location}</p>
+                      <p className="text-small text-default-500">
+                        {item.location.map((loc, index) => (
+                          <span key={index}>
+                            {loc}
+                            {index < item.location.length - 1 && ", "}
+                          </span>
+                        ))}
+                      </p>
                     </div>
                     <div className="flex flex-col">
                       <p className="text-md text-green-300"> {item.status}</p>
@@ -72,7 +79,7 @@ const VacancyAlt: React.FC<VacancyAltProps> = ({ item }) => {
               </Card>
               </ModalBody>
               <ModalFooter>
-                <Button color="success" variant="flat" onPress={onClose}>
+                <Button  className="p-4" color="success" variant="flat" onPress={onClose}>
                   Close
                 </Button>
               </ModalFooter>
