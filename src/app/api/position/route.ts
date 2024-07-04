@@ -39,15 +39,20 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     await dbConnect();
-    const { id, status } = await req.json();
+    const { id, name, description, status } = await req.json();
 
-    if (!id || !status) {
-      return NextResponse.json({ error: 'ID and status are required' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
+
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (status !== undefined) updateData.status = status;
 
     const updatedPosition = await Position.findByIdAndUpdate(
       id,
-      { status },
+      updateData,
       { new: true }
     );
 
