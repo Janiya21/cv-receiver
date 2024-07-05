@@ -75,6 +75,10 @@ export default function VacancyForm() {
       });
 
       if (!response.ok) {
+        toast({
+          description: "Error Creating Vacancy!",
+          variant: "destructive",
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -85,6 +89,10 @@ export default function VacancyForm() {
       });
       window.location.reload();
     } catch (error) {
+      toast({
+        description: "Error Creating Vacancy!",
+        variant: "destructive",
+      });
       console.error("Error creating Vacancy:", error);
     }
   };

@@ -104,15 +104,26 @@ const TableVacancy = () => {
       });
 
       if (!response.ok) {
+        toast({
+          description: "Vacancy Edit Unsuccessful!",
+          variant: "destructive",
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       await response.json();
-
+      toast({
+        description: "Vacancy Successfully Inactivated!",
+        variant: "default",
+      });
       // After successful update, refetch data to update the table
       fetchData();
       setIsEditModalOpen(false);
     } catch (error) {
+      toast({
+        description: "Vacancy Edit Unsuccessful!",
+        variant: "destructive",
+      });
       console.error('Error updating position:', error);
     }
   };
@@ -128,6 +139,10 @@ const TableVacancy = () => {
       });
 
       if (!response.ok) {
+        toast({
+          description: "Error Deleting Vacancy!",
+          variant: "destructive",
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -140,6 +155,10 @@ const TableVacancy = () => {
 
       fetchData();
     } catch (error) {
+      toast({
+        description: "Error Deleting Vacancy!",
+        variant: "destructive",
+      });
       console.error("Error updating vacancy:", error);
     } finally {
       setShowConfirmation(false);
@@ -233,7 +252,7 @@ const TableVacancy = () => {
                     </Chip>
                   ) : columnKey === "actions" ? (
                     <div style={{ display: item["status"] === "active" ? "flex" : "none", gap: "8px" }}>
-                      <Button className="bg-transparent border-green-400 border-2" auto light onClick={() => handleEdit(item.key)}>
+                      <Button style={{ display: item["applicants"].length > 0 ? "flex" : "none", gap: "8px" }} className="bg-transparent border-green-400 border-2" auto light onClick={() => handleEdit(item.key)}>
                         <FontAwesomeIcon icon={faEdit} />
                       </Button>
                       <Button className="bg-transparent border-red-300 border-2" auto light onClick={() => handleShowConfirmation(item.key)}>

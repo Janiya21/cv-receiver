@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Table, TableHeader, useDisclosure, TableColumn, ModalContent, TableBody, ModalHeader, ModalBody, ModalFooter, TableRow, TableCell, Chip, Button, Pagination, Modal, Input } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { useToast } from "@/components/ui/use-toast";
 
 const columns = [
   {
@@ -33,6 +34,7 @@ const TableUI = () => {
   const [filter, setFilter] = useState("");
   const itemsPerPage = 4;
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -83,6 +85,10 @@ const TableUI = () => {
       });
 
       if (!response.ok) {
+        toast({
+          description: "Error Updating Vacancy!",
+          variant: "destructive",
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -91,7 +97,15 @@ const TableUI = () => {
       // After successful update, refetch data to update the table
       fetchData();
       setIsEditModalOpen(false);
+      toast({
+        description: "Vacancy Updated Successful!",
+        variant: "default",
+      });
     } catch (error) {
+      toast({
+        description: "Error Updating Vacancy!",
+        variant: "destructive",
+      });
       console.error('Error updating position:', error);
     }
   };
@@ -107,15 +121,26 @@ const TableUI = () => {
       });
 
       if (!response.ok) {
+        toast({
+          description: "Error Updating Status!",
+          variant: "destructive",
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       await response.json();
-
+      toast({
+        description: "Status Successfully Updated!",
+        variant: "default",
+      });
       // After successful deletion, refetch data to update the table
       fetchData();
     } catch (error) {
-      console.error('Error updating position:', error);
+      toast({
+        description: "Error Updating Status!",
+        variant: "destructive",
+      });
+      console.error('Error updating Status:', error);
     } finally {
       onOpenChange(false); // Close the confirmation modal after deletion
       setDeleteKey(null); // Clear delete key
