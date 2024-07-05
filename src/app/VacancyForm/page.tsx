@@ -1,3 +1,4 @@
+"use client"
 import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 import VacancyForm from '../vacancy-form/page';
