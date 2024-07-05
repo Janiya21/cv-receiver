@@ -1,12 +1,25 @@
-// TableVacancy.tsx
-
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input } from "@nextui-org/react";
 import VacancyAlt from "../vacancy-alt/page";
 import VacancyList from "../applicants-for-vacancy/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@/components/ui/use-toast";
+
+
+const positions = [
+  "Addalaichenai",
+  "Akkaraipattu",
+  "Ampara",
+  "Bakmitiyawa",
+  "Central Camp",
+  "Dadayamtalawa",
+  "Damana",
+  "Damanewela",
+  "Deegawapiya",
+  "Dehiattakandiya",
+  "Devalahinda"
+];
 
 const columns = [
   {
@@ -42,9 +55,10 @@ const columns = [
 const TableVacancy = () => {
   const [rows, setRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showConfirmation, setShowConfirmation] = useState(false); // State to control modal visibility
-  const [deleteKey, setDeleteKey] = useState(null); // State to store the key of the item to delete
-  const { toast } = useToast()
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [deleteKey, setDeleteKey] = useState(null);
+  const [filters, setFilters] = useState({ title: "", location: "", position: "" });
+  const { toast } = useToast();
   const itemsPerPage = 4;
 
   useEffect(() => {
@@ -60,7 +74,7 @@ const TableVacancy = () => {
       const vacancyData = await vacancyRes.json();
       console.log("Vacancy data:", vacancyData);
 
-      const formattedRows = vacancyData.map((vacancy, index) => ({
+      const formattedRows = vacancyData.map((vacancy) => ({
         key: vacancy._id,
         title: vacancy.title,
         applicants: vacancy.applicants,
@@ -74,7 +88,7 @@ const TableVacancy = () => {
 
       setRows(formattedRows);
     } catch (error) {
-      console.error('Error fetching Vacancy:', error);
+      console.error("Error fetching Vacancy:", error);
     }
   };
 
@@ -86,11 +100,11 @@ const TableVacancy = () => {
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:3000/api/vacancy`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: deleteKey, status: 'inactive' })
+        body: JSON.stringify({ id: deleteKey, status: "inactive" }),
       });
 
       if (!response.ok) {
@@ -104,14 +118,12 @@ const TableVacancy = () => {
 
       await response.json();
 
-      // After successful deletion, refetch data to update the table
       fetchData();
-
     } catch (error) {
-      console.error('Error updating vacancy:', error);
+      console.error("Error updating vacancy:", error);
     } finally {
-      setShowConfirmation(false); // Close the confirmation modal after deletion
-      setDeleteKey(null); // Clear delete key
+      setShowConfirmation(false);
+      setDeleteKey(null);
     }
   };
 
@@ -129,12 +141,47 @@ const TableVacancy = () => {
     setDeleteKey(null);
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
+  const filteredRows = rows.filter((row) => {
+    const matchesTitle = row.title.toLowerCase().includes(filters.title.toLowerCase());
+    const matchesLocation = row.location.some(loc => loc.toLowerCase().includes(filters.location.toLowerCase()));
+    const matchesPosition = row.position.toLowerCase().includes(filters.position.toLowerCase());
+    return matchesTitle && matchesLocation && matchesPosition;
+  });
+
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedRows = rows.slice(startIndex, startIndex + itemsPerPage);
+  const selectedRows = filteredRows.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div>
-      <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">ALL VACANCIES</Chip>
+      <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">
+        ALL VACANCIES
+      </Chip>
+      <div className="mb-4 flex gap-4">
+        <Input
+          placeholder="Filter by Title"
+          name="title"
+          value={filters.title}
+          onChange={handleFilterChange}
+        />
+         <Input
+          placeholder="Filter by Position"
+          name="position"
+          value={filters.position}
+          onChange={handleFilterChange}
+        />
+        <Input
+          placeholder="Filter by Location"
+          name="location"
+          value={filters.location}
+          onChange={handleFilterChange}
+        />
+       
+      </div>
       <Table style={{ backgroundColor: "rgb(226 255 231)" }} aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
@@ -143,17 +190,23 @@ const TableVacancy = () => {
           {(item) => (
             <TableRow key={item.key}>
               {(columnKey) => (
-                <TableCell >
+                <TableCell>
                   {columnKey === "data" ? (
                     <VacancyAlt item={item} />
                   ) : columnKey === "applicants" ? (
-                    <VacancyList className="" item={item.applicants} />
-                  ) : columnKey === "status" ? (    
-                    <Chip style={{ backgroundColor: item[columnKey] === "active" ? '#8FFF94' : '#FF7C7C  ' }}>{item[columnKey]}</Chip>
+                    <VacancyList item={item.applicants} />
+                  ) : columnKey === "status" ? (
+                    <Chip style={{ backgroundColor: item[columnKey] === "active" ? "#8FFF94" : "#FF7C7C" }}>
+                      {item[columnKey]}
+                    </Chip>
                   ) : columnKey === "actions" ? (
-                    <div style={{ display: item["status"] === "active" ? 'flex' : 'none', gap: '8px' }}>
-                      <Button className="bg-transparent border-green-400 border-2" auto light onClick={() => handleEdit(item.key)}><FontAwesomeIcon icon={faEdit} /></Button>
-                      <Button className="bg-transparent border-red-300 border-2" auto light onClick={() => handleShowConfirmation(item.key)}><FontAwesomeIcon icon={faTrashAlt} /></Button>
+                    <div style={{ display: item["status"] === "active" ? "flex" : "none", gap: "8px" }}>
+                      <Button className="bg-transparent border-green-400 border-2" auto light onClick={() => handleEdit(item.key)}>
+                        <FontAwesomeIcon icon={faEdit} />
+                      </Button>
+                      <Button className="bg-transparent border-red-300 border-2" auto light onClick={() => handleShowConfirmation(item.key)}>
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                      </Button>
                     </div>
                   ) : (
                     item[columnKey]
@@ -165,13 +218,10 @@ const TableVacancy = () => {
         </TableBody>
       </Table>
 
-      {/* Confirmation Modal */}
       <Modal isOpen={showConfirmation} onOpenChange={setShowConfirmation}>
         <ModalContent>
           <ModalHeader>Confirmation Required</ModalHeader>
-          <ModalBody>
-            Are you sure you want to delete this record?
-          </ModalBody>
+          <ModalBody>Are you sure you want to delete this record?</ModalBody>
           <ModalFooter>
             <Button variant="text" color="secondary" onClick={handleCancelDelete}>
               Cancel
@@ -184,12 +234,7 @@ const TableVacancy = () => {
       </Modal>
 
       <div className="mt-4 flex justify-end">
-        <Pagination
-          total={Math.ceil(rows.length / itemsPerPage)}
-          initialPage={1}
-          page={currentPage}
-          onChange={handlePageChange}
-        />
+        <Pagination total={Math.ceil(filteredRows.length / itemsPerPage)} initialPage={1} page={currentPage} onChange={handlePageChange} />
       </div>
     </div>
   );

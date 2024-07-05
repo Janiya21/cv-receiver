@@ -35,6 +35,10 @@ export default function PositionForm() {
       console.log("Position created successfully:", await response.json());
       onOpenChange(); // Close the modal
     } catch (error) {
+      toast({
+        description: "Error Creating Positions!",
+        variant: "destructive",
+      });
       console.error("Error creating position:", error);
     }
   };

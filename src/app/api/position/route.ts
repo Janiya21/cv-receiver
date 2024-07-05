@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Position from '@/model/Position';
 
+
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  
   try {
     await dbConnect();
     const { name, description } = await req.json();

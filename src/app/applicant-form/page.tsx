@@ -30,7 +30,7 @@ export default function ApplicantForm() {
       console.log("Position created successfully:", await response.json());
       // onOpenChange(false); // Close the modal
     } catch (error) {
-      console.error("Error creating position:", error);
+      console.error("Error creating Applicant:", error);
     }
   };
 
