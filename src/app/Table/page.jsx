@@ -40,7 +40,7 @@ const TableUI = () => {
 
   const fetchData = async () => {
     try {
-      const positionsRes = await fetch("http://localhost:3000/api/position");
+      const positionsRes = await fetch("api/position");
       if (!positionsRes.ok) {
         throw new Error(`HTTP error! status: ${positionsRes.status}`);
       }
@@ -74,7 +74,7 @@ const TableUI = () => {
 
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/position`, {
+      const response = await fetch("api/position", {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ const TableUI = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/position`, {
+      const response = await fetch("api/position", {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
