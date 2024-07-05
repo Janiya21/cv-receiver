@@ -1,26 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure } from "@nextui-org/react";
 import VacancyAlt from "../vacancy-alt/page";
 import VacancyList from "../applicants-for-vacancy/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@/components/ui/use-toast";
-
-
-const positions = [
-  "Addalaichenai",
-  "Akkaraipattu",
-  "Ampara",
-  "Bakmitiyawa",
-  "Central Camp",
-  "Dadayamtalawa",
-  "Damana",
-  "Damanewela",
-  "Deegawapiya",
-  "Dehiattakandiya",
-  "Devalahinda"
-];
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const columns = [
   {
@@ -59,8 +46,11 @@ const TableVacancy = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deleteKey, setDeleteKey] = useState(null);
   const [filters, setFilters] = useState({ title: "", location: "", position: "" });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editData, setEditData] = useState({ key: "", title: "", description: "", endDate: "" });
   const { toast } = useToast();
   const itemsPerPage = 4;
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     fetchData();
@@ -94,8 +84,37 @@ const TableVacancy = () => {
   };
 
   const handleEdit = (key) => {
-    console.log("Edit row with key:", key);
-    // Implement your edit logic here
+    const rowData = rows.find(row => row.key === key);
+    setEditData(rowData);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditChange = (content, delta, source, editor) => {
+    setEditData(prevState => ({ ...prevState, description: content }));
+  };
+
+  const handleEditSubmit = async () => {
+    try {
+      const response = await fetch(`api/vacancy`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: editData.key, title: editData.title, description: editData.description, endDate: editData.endDate })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      await response.json();
+
+      // After successful update, refetch data to update the table
+      fetchData();
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error('Error updating position:', error);
+    }
   };
 
   const handleDelete = async () => {
@@ -156,6 +175,18 @@ const TableVacancy = () => {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const selectedRows = filteredRows.slice(startIndex, startIndex + itemsPerPage);
+
+  const modules = {
+    toolbar: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, 
+       {'indent': '-1'}, {'indent': '+1'}],
+      ['link', 'image', 'video'],
+      ['clean']                                  
+    ],
+  };
 
   return (
     <div>
@@ -237,6 +268,47 @@ const TableVacancy = () => {
       <div className="mt-4 flex justify-end">
         <Pagination total={Math.ceil(filteredRows.length / itemsPerPage)} initialPage={1} page={currentPage} onChange={handlePageChange} />
       </div>
+
+      <Modal className="min-w-[80vw] max-h-[96vh] overflow-scroll" isOpen={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Edit Position</ModalHeader>
+              <ModalBody>
+                <Input
+                  label="Title"
+                  name="title"
+                  value={editData.title}
+                  onChange={handleEditChange}
+                />
+                <ReactQuill
+                  placeholder="Description"
+                  className="min-h-20"
+                  name="description"
+                  modules={modules}
+                  theme="snow"
+                  value={editData.description}
+                  onChange={handleEditChange}
+                />
+                <Input
+                  label="End Date"
+                  name="endDate"
+                  value={editData.endDate}
+                  onChange={handleEditChange}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button color="primary" onPress={handleEditSubmit}>
+                  Save
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

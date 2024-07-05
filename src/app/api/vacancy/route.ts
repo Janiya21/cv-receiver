@@ -52,15 +52,21 @@ export async function POST(req: NextRequest) {
   export async function PATCH(req: NextRequest) {
     try {
       await dbConnect();
-      const { id, status } = await req.json();
+      const { id, status, title, description, endDate } = await req.json();
   
-      if (!id || !status) {
-        return NextResponse.json({ error: 'ID and status are required' }, { status: 400 });
+      if (!id) {
+        return NextResponse.json({ error: 'ID is required' }, { status: 400 });
       }
+  
+      const updateData:any = {};
+      if (status) updateData.status = status;
+      if (title) updateData.title = title;
+      if (description) updateData.description = description;
+      if (endDate) updateData.endDate = endDate;
   
       const updatedVacancy = await Vacancy.findByIdAndUpdate(
         id,
-        { status },
+        updateData,
         { new: true }
       );
   
