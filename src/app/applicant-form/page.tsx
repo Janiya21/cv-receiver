@@ -14,7 +14,7 @@ export default function ApplicantForm() {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/position", {
+      const response = await fetch("api/position", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

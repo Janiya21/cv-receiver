@@ -33,7 +33,7 @@ export default function VacancyForm() {
   useEffect(() => {
     const fetchPositions = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/position");
+        const response = await fetch("api/position");
         const data = await response.json();
         const positionOptions = data.map((position: { _id: string; name: string }) => ({
           value: position._id,
@@ -66,7 +66,7 @@ export default function VacancyForm() {
     try {
       console.log(positionData);
 
-      const response = await fetch("http://localhost:3000/api/vacancy", {
+      const response = await fetch("api/vacancy", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
