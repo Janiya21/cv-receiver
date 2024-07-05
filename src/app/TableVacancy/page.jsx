@@ -67,7 +67,7 @@ const TableVacancy = () => {
 
   const fetchData = async () => {
     try {
-      const vacancyRes = await fetch("http://localhost:3000/api/vacancy");
+      const vacancyRes = await fetch("api/vacancy");
       if (!vacancyRes.ok) {
         throw new Error(`HTTP error! status: ${vacancyRes.status}`);
       }
@@ -99,7 +99,7 @@ const TableVacancy = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/vacancy`, {
+      const response = await fetch("api/vacancy", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
