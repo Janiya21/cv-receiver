@@ -1,6 +1,7 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 import { Avatar } from "@nextui-org/avatar";
 
 interface VacancyItem {
@@ -11,17 +12,21 @@ interface VacancyItem {
   location: string;
   phoneNo: string;
   vacancies: string;
-  cv:string;
+  cv: string;
 }
 
-function ApplicantsForVacancy({ item }: { item: VacancyItem[] }) {
+interface ApplicantsForVacancyProps {
+  item: VacancyItem[];
+}
+
+const ApplicantsForVacancy: React.FC<ApplicantsForVacancyProps> = ({ item }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [applicants, setApplicants] = useState(item);
 
   useEffect(() => {
     console.log(item);
     setApplicants(item);
-  }, []);
+  }, [item]);
 
   return (
     <div>
@@ -40,7 +45,7 @@ function ApplicantsForVacancy({ item }: { item: VacancyItem[] }) {
             <>
               <ModalHeader className="flex flex-col gap-1"></ModalHeader>
               <ModalBody>
-                {item.map((vacancy, index) => (
+                {applicants.map((vacancy, index) => (
                   <div key={vacancy.key}>
                     <span>
                       <div className="max-h-max w-full px-16 flex items-center justify-center dark:bg-gray-900">
