@@ -42,7 +42,7 @@ const TableUI = () => {
 
   const fetchData = async () => {
     try {
-      const positionsRes = await fetch("api/position");
+      const positionsRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position");
       if (!positionsRes.ok) {
         throw new Error(`HTTP error! status: ${positionsRes.status}`);
       }
@@ -76,7 +76,7 @@ const TableUI = () => {
 
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch(`api/position`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`api/position`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ const TableUI = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`api/position`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`api/position`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

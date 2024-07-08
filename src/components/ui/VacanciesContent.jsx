@@ -3,8 +3,8 @@
 
 import { useState } from 'react';
 import VacancyForm from "../../app/vacancy-form/page"; 
-import TableVacancy from "../../app/TableVacancy/page"; 
 import { Button, Chip } from "@nextui-org/react";
+import TableVacancy from '@/app/TableVacancy/page';
 
 export default function VacanciesContent() {
   const [showVacancyForm, setShowVacancyForm] = useState(false);

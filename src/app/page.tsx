@@ -16,7 +16,7 @@ export default function Home() {
         <div className="py-6">
           <div className="mt-5">
             <div className="flex w-full flex-col">
-              <Tabs defaultValue="account" className="w-full">
+              <Tabs defaultValue="positions" className="w-full">
                 <TabsList>
                   <TabsTrigger value="positions">POSITIONS</TabsTrigger>
                   <TabsTrigger value="vacancies">VACANCIES</TabsTrigger>

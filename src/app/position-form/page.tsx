@@ -16,7 +16,7 @@ export default function PositionForm() {
     };
 
     try {
-      const response = await fetch("api/position", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,6 +34,7 @@ export default function PositionForm() {
       });
       console.log("Position created successfully:", await response.json());
       onOpenChange(); // Close the modal
+      window.location.reload();
     } catch (error) {
       toast({
         description: "Error Creating Positions!",

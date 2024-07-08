@@ -44,7 +44,7 @@ const TableApplicanty = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const applicantRes = await fetch("api/applicant");
+        const applicantRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/applicant");
         if (!applicantRes.ok) {
           throw new Error(`HTTP error! status: ${applicantRes.status}`);
         }

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure } from "@nextui-org/react";
+import { Table, TableHeader, DatePicker, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure } from "@nextui-org/react";
 import VacancyAlt from "../vacancy-alt/page";
 import VacancyList from "../applicants-for-vacancy/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,36 +8,17 @@ import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@/components/ui/use-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+// import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const columns = [
-  {
-    key: "title",
-    label: "TITLE",
-  },
-  {
-    key: "position",
-    label: "POSITION",
-  },
-  {
-    key: "status",
-    label: "STATUS",
-  },
-  {
-    key: "endDate",
-    label: "END DATE",
-  },
-  {
-    key: "applicants",
-    label: "APPLICANTS",
-  },
-  {
-    key: "data",
-    label: "DETAILS",
-  },
-  {
-    key: "actions",
-    label: "ACTIONS",
-  },
+  { key: "title", label: "TITLE" },
+  { key: "position", label: "POSITION" },
+  { key: "status", label: "STATUS" },
+  { key: "endDate", label: "END DATE" },
+  { key: "applicants", label: "APPLICANTS" },
+  { key: "data", label: "DETAILS" },
+  { key: "actions", label: "ACTIONS" },
 ];
 
 const TableVacancy = () => {
@@ -45,27 +26,42 @@ const TableVacancy = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deleteKey, setDeleteKey] = useState(null);
+  const [positions, setPositions] = useState<any[]>([]);
   const [filters, setFilters] = useState({ title: "", location: "", position: "" });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editData, setEditData] = useState({ key: "", title: "", description: "", endDate: "" });
+  const [editData, setEditData] = useState<any>({ key: "", title: "", description: "", endDate: "" });
   const { toast } = useToast();
   const itemsPerPage = 4;
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     fetchData();
+    fetchPositions();
   }, []);
+
+  const fetchPositions = async () => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position");
+      const data = await response.json();
+      const positionOptions = data.map((position: { _id: string; name: string }) => ({
+        value: position._id,
+        label: position.name,
+      }));
+      setPositions(positionOptions);
+    } catch (error) {
+      console.error("Error fetching positions:", error);
+    }
+  };
 
   const fetchData = async () => {
     try {
-      const vacancyRes = await fetch("api/vacancy");
+      const vacancyRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/vacancy");
       if (!vacancyRes.ok) {
         throw new Error(`HTTP error! status: ${vacancyRes.status}`);
       }
       const vacancyData = await vacancyRes.json();
       console.log("Vacancy data:", vacancyData);
 
-      const formattedRows = vacancyData.map((vacancy) => ({
+      const formattedRows = vacancyData.map((vacancy:any) => ({
         key: vacancy._id,
         title: vacancy.title,
         applicants: vacancy.applicants,
@@ -83,24 +79,24 @@ const TableVacancy = () => {
     }
   };
 
-  const handleEdit = (key) => {
-    const rowData = rows.find(row => row.key === key);
+  const handleEdit = (key:any) => {
+    const rowData = rows.find((row:any) => row.key === key);
     setEditData(rowData);
     setIsEditModalOpen(true);
   };
 
-  const handleEditChange = (content, delta, source, editor) => {
-    setEditData(prevState => ({ ...prevState, description: content }));
+  const handleEditChange = (value:any, name:any) => {
+    setEditData((prevState:any) => ({ ...prevState, [name]: value }));
   };
 
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch(`api/vacancy`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`api/vacancy`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: editData.key, title: editData.title, description: editData.description, endDate: editData.endDate })
+        body: JSON.stringify({ id: editData.key, title: editData.title, description: editData.description, endDate: editData.endDate }),
       });
 
       if (!response.ok) {
@@ -116,7 +112,6 @@ const TableVacancy = () => {
         description: "Vacancy Successfully Inactivated!",
         variant: "default",
       });
-      // After successful update, refetch data to update the table
       fetchData();
       setIsEditModalOpen(false);
     } catch (error) {
@@ -130,7 +125,7 @@ const TableVacancy = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`api/vacancy`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`api/vacancy`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -166,11 +161,11 @@ const TableVacancy = () => {
     }
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page:any) => {
     setCurrentPage(page);
   };
 
-  const handleShowConfirmation = (key) => {
+  const handleShowConfirmation = (key:any) => {
     setShowConfirmation(true);
     setDeleteKey(key);
   };
@@ -180,14 +175,14 @@ const TableVacancy = () => {
     setDeleteKey(null);
   };
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e:any) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const filteredRows = rows.filter((row) => {
+  const filteredRows = rows.filter((row:any) => {
     const matchesTitle = row.title.toLowerCase().includes(filters.title.toLowerCase());
-    const matchesLocation = row.location.some(loc => loc.toLowerCase().includes(filters.location.toLowerCase()));
+    const matchesLocation = row.location.some((loc:any) => loc.toLowerCase().includes(filters.location.toLowerCase()));
     const matchesPosition = row.position.toLowerCase().includes(filters.position.toLowerCase());
     return matchesTitle && matchesLocation && matchesPosition;
   });
@@ -197,13 +192,12 @@ const TableVacancy = () => {
 
   const modules = {
     toolbar: [
-      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-      [{size: []}],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, 
-       {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image', 'video'],
-      ['clean']                                  
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link", "image", "video"],
+      ["clean"],
     ],
   };
 
@@ -212,33 +206,32 @@ const TableVacancy = () => {
       <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">
         ALL VACANCIES
       </Chip>
-      <div className="mb-4 flex gap-4">
+      <div className="mb-4 flex gap-4 w-1/2">
         <Input
           placeholder="Filter by Title"
           name="title"
           value={filters.title}
           onChange={handleFilterChange}
         />
-         <Input
+        <Input
           placeholder="Filter by Position"
           name="position"
           value={filters.position}
           onChange={handleFilterChange}
         />
-        <Input
+        {/* <Input
           placeholder="Filter by Location"
           name="location"
           value={filters.location}
           onChange={handleFilterChange}
-        />
-       
+        /> */}
       </div>
       <Table style={{ backgroundColor: "rgb(226 255 231)" }} aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
         </TableHeader>
         <TableBody items={selectedRows}>
-          {(item) => (
+          {(item:any) => (
             <TableRow key={item.key}>
               {(columnKey) => (
                 <TableCell>
@@ -252,10 +245,10 @@ const TableVacancy = () => {
                     </Chip>
                   ) : columnKey === "actions" ? (
                     <div style={{ display: item["status"] === "active" ? "flex" : "none", gap: "8px" }}>
-                      <Button style={{ display: item["applicants"].length > 0 ? "flex" : "none", gap: "8px" }} className="bg-transparent border-green-400 border-2" auto light onClick={() => handleEdit(item.key)}>
+                      <Button style={{ display: item["applicants"].length == 0 ? "flex" : "none", gap: "8px" }} className="bg-transparent border-green-400 border-2" onClick={() => handleEdit(item.key)}>
                         <FontAwesomeIcon icon={faEdit} />
                       </Button>
-                      <Button className="bg-transparent border-red-300 border-2" auto light onClick={() => handleShowConfirmation(item.key)}>
+                      <Button className="bg-transparent border-red-300 border-2" onClick={() => handleShowConfirmation(item.key)}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </Button>
                     </div>
@@ -274,10 +267,10 @@ const TableVacancy = () => {
           <ModalHeader>Confirmation Required</ModalHeader>
           <ModalBody>Are you sure you want to delete this record?</ModalBody>
           <ModalFooter>
-            <Button variant="text" color="secondary" onClick={handleCancelDelete}>
+            <Button variant="light" color="secondary" onClick={handleCancelDelete}>
               Cancel
             </Button>
-            <Button variant="text" color="error" onClick={handleDelete}>
+            <Button variant="ghost" color="danger" onClick={handleDelete}>
               Delete
             </Button>
           </ModalFooter>
@@ -292,28 +285,28 @@ const TableVacancy = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Edit Position</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Edit Vacancy</ModalHeader>
               <ModalBody>
                 <Input
                   label="Title"
                   name="title"
                   value={editData.title}
-                  onChange={handleEditChange}
+                  onChange={(e) => handleEditChange(e.target.value, "title")}
                 />
                 <ReactQuill
                   placeholder="Description"
                   className="min-h-20"
-                  name="description"
+                  // name="description"
                   modules={modules}
                   theme="snow"
                   value={editData.description}
-                  onChange={handleEditChange}
+                  onChange={(content) => handleEditChange(content, "description")}
                 />
-                <Input
+                 <Input
                   label="End Date"
                   name="endDate"
                   value={editData.endDate}
-                  onChange={handleEditChange}
+                  onSelect={(date) => handleEditChange(date, "endDate")}
                 />
               </ModalBody>
               <ModalFooter>

@@ -47,45 +47,12 @@ const authOptions: NextAuthConfig = {
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET
           }),
-        // Credentials({
-        //     name: 'Credentials',
-        //     credentials: {
-        //         username: {label: "Username", type: "text", placeholder:"jsmith"},
-        //         password: {label: "Username", type: "password"}
-        //     },
-        //     async authorize(credentials): Promise<User | null>{
-        //         const users = [
-        //             {
-        //                 id: "test-user-1",
-        //                 userName: "Janiya",
-        //                 name: "Janith",
-        //                 password: "1212",
-        //                 email: "janithsandaru999@gmail.com",
-        //             },
-        //             {
-        //                 id: "test-user-1",
-        //                 userName: "Janiya",
-        //                 name: "Janith",
-        //                 password: "1212",
-        //                 email: "janithsandaru999@gmail.com",
-        //             },
-        //             {
-        //                 id: "test-user-2",
-        //                 userName: "Janiya",
-        //                 name: "Janith",
-        //                 password: "1212",
-        //                 email: "janithsandaru999@gmail.com",
-        //             },
-        //         ]
-        //         const user = users.find(
-        //             (user) => user.userName === credentials.username && user.password === credentials.password
-        //         );
-        //         return user? {id: user.id, name: user.name, email:user.email} : null;
-        //     }
-        // })
     ],
+    pages: {
+      signIn: "/auth/signIn",
+    },
     basePath: BASE_PATH,
-    secret: process.env.EXTAUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
 }
 
 export const {handlers, auth, signIn, signOut} = NextAuth(authOptions);

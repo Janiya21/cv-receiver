@@ -14,7 +14,7 @@ export default function ApplicantForm() {
     };
 
     try {
-      const response = await fetch("api/position", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
