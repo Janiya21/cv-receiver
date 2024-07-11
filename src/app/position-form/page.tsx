@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from "@nextui-org/react";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function PositionForm() {
@@ -9,7 +9,27 @@ export default function PositionForm() {
   const [description, setDescription] = useState("");
   const { toast } = useToast();
 
+  // State for form validation errors
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    description: "",
+  });
+
   const handleSubmit = async () => {
+    // Perform validation
+    const errors: any = {};
+    if (!name) {
+      errors.name = "Name is required";
+    }
+    if (!description.trim()) {
+      errors.description = "Description is required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     const positionData = {
       name,
       description,
@@ -46,15 +66,10 @@ export default function PositionForm() {
 
   return (
     <>
-      {/* <Button onPress={onOpen} color="primary" variant="bordered">Create Position</Button> */}
       <Button color="primary" variant="light" onPress={onOpen}>
-          + Create Position
+        + Create Position
       </Button>
-      <Modal 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange}
-        placement="top-center"
-      >
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (
             <>
@@ -67,14 +82,18 @@ export default function PositionForm() {
                   variant="bordered"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className={formErrors.name ? "border-red-500" : ""}
                 />
+                {formErrors.name && <span className="text-red-600">{formErrors.name}</span>}
                 <Input
                   label="Description"
                   placeholder="Enter Description"
                   variant="bordered"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  className={formErrors.description ? "border-red-500" : ""}
                 />
+                {formErrors.description && <span className="text-red-600">{formErrors.description}</span>}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>

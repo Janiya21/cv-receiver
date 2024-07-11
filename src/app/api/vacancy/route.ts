@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
+import Applicant from "@/model/Applicant";
 import Position from "@/model/Position";
 import Vacancy from "@/model/Vacancy";
 import { NextRequest, NextResponse } from 'next/server';
@@ -6,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   await dbConnect();
   try {
+    await Applicant.find({})
     const vacancies = await Vacancy.find({})
     .populate('position').populate('applicants');
       return NextResponse.json(vacancies, { status: 200 });

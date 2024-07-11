@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, DateValue, Input, DatePicker, Chip } from "@nextui-org/react";
 import ReactQuill from "react-quill";
 import Select, { MultiValue, SingleValue } from 'react-select';
@@ -30,12 +30,22 @@ export default function VacancyForm() {
   const [description, setDescription] = useState("");
   const { toast } = useToast();
 
+  // State for form validation errors
+  const [formErrors, setFormErrors] = useState({
+    title: "",
+    selectedPosition: "",
+    endDate: "",
+    description: "",
+    locations: "",
+  });
+
   useEffect(() => {
     const fetchPositions = async () => {
       try {
         const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position");
         const data = await response.json();
-        const positionOptions = data.map((position: { _id: string; name: string }) => ({
+        const activePositions = data.filter((position: { status: string }) => position.status === 'active');
+        const positionOptions = activePositions.map((position: { _id: string; name: string }) => ({
           value: position._id,
           label: position.name,
         }));
@@ -62,6 +72,29 @@ export default function VacancyForm() {
       createDate,
       endDate: convertToStr(endDate)
     };
+
+    // Perform validation
+    const errors: any = {};
+    if (!title) {
+      errors.title = "Title is required";
+    }
+    if (!selectedPosition) {
+      errors.selectedPosition = "Position is required";
+    }
+    if (!endDate) {
+      errors.endDate = "End Date is required";
+    }
+    if (!description.trim()) {
+      errors.description = "Description is required";
+    }
+    if (locations.length === 0) {
+      errors.locations = "Location(s) are required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
 
     try {
       console.log(positionData);
@@ -117,47 +150,53 @@ export default function VacancyForm() {
     ],
   };
 
-
   return (
     <>
       <div style={{ borderRadius: "20px" }} className="mx-10 bg-white border-1 border-green-500">
         <div className="flex flex-col gap-2 mx-20 pb-10 pt-5">
           <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">ADD VACANCY</Chip>
-          <Select
-            isMulti
-            className="z-40"
-            placeholder="Select Locations"
-            options={locationsData}
-            value={locations}
-            onChange={(newValue) => setLocations(newValue)}
-          />
           <Input
             label="Title"
             placeholder="Enter Title"
             variant="bordered"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className={formErrors.title ? "border-red-500" : ""}
           />
+          {formErrors.title && <span className="text-red-600">{formErrors.title}</span>}
+          <Select
+            isMulti
+            className={`z-40 ${formErrors.locations ? "border-red-500" : ""}`}
+            placeholder="Select Locations"
+            options={locationsData}
+            value={locations}
+            onChange={(newValue) => setLocations(newValue)}
+          />
+          {formErrors.locations && <span className="text-red-600">{formErrors.locations}</span>}
           <Select
             placeholder="Select Position"
             options={positions}
             value={selectedPosition}
             onChange={(newValue) => setSelectedPosition(newValue)}
+            className={formErrors.selectedPosition ? "border-red-500" : ""}
           />
+          {formErrors.selectedPosition && <span className="text-red-600">{formErrors.selectedPosition}</span>}
           <DatePicker
             label="End Date"
-            className="border-1"
+            className={formErrors.endDate ? "border-red-500" : ""}
             value={endDate}
             onChange={(date) => setEndDate(date)}
           />
+          {formErrors.endDate && <span className="text-red-600">{formErrors.endDate}</span>}
           <ReactQuill
             placeholder="Description"
-            className="min-h-20"
+            className={`min-h-20 ${formErrors.description ? "border-red-500" : ""}`}
             modules={modules}
             theme="snow"
             value={description}
             onChange={setDescription}
           />
+          {formErrors.description && <span className="text-red-600">{formErrors.description}</span>}
           <div className="flex justify-center mt-4">
             <Button className="w-1/3 text-white font-bold" color="success" onPress={handleSubmit}>
               Create

@@ -1,9 +1,17 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Pagination } from "@nextui-org/react";
-import VacancyForApplicant from "../vacancy-for-applicant/page";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
-import VacancyAlt from "../vacancy-alt/page";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Chip,
+  Button,
+  Pagination,
+} from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 
 const columns = [
   {
@@ -27,24 +35,30 @@ const columns = [
     label: "MOBILE",
   },
   {
-    key: "cv",
+    key: "url",
     label: "CV",
   },
   {
-    key: "vacancies",
+    key: "position",
     label: "APPLIED VACANCIES",
-  }
+  },
+  {
+    key: "notice",
+    label: "NOTICE PERIOD",
+  },
 ];
 
 const TableApplicanty = () => {
   const [rows, setRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const itemsPerPage = 4;
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsSubmitting(true);
       try {
-        const applicantRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/applicant");
+        const applicantRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "api/applicant-alt");
         if (!applicantRes.ok) {
           throw new Error(`HTTP error! status: ${applicantRes.status}`);
         }
@@ -59,13 +73,17 @@ const TableApplicanty = () => {
           location: applicant.location,
           phoneNo: applicant.phoneNo,
           vacancy: applicant.vacancy,
-          cv: applicant.cv,
-          vacancies: applicant.vacancies
+          url: applicant.url, // Use applicant file buffer directly
+          notice: applicant.noticePeriod + " months",
+          position: applicant.position.name,
         }));
 
+        console.log(formattedRows);
         setRows(formattedRows);
       } catch (error) {
-        console.error('Error fetching Applicant:', error);
+        console.error("Error fetching Applicant:", error);
+      } finally {
+        setIsSubmitting(false); // Reset isSubmitting after submission attempt
       }
     };
 
@@ -79,9 +97,16 @@ const TableApplicanty = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const selectedRows = rows.slice(startIndex, startIndex + itemsPerPage);
 
+  const openPdfInNewWindow = (pdfUrl) => {
+    console.log(pdfUrl);
+    window.open(pdfUrl, "_blank");
+  };
+
   return (
     <div>
-      <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">ALL APPLICANTS</Chip>
+      <Chip color="success" variant="dot" className="mb-4 text-xl px-3 py-4 font-bolder">
+        ALL APPLICANTS
+      </Chip>
       <Table style={{ backgroundColor: "rgb(226 255 231)" }} aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
@@ -91,39 +116,14 @@ const TableApplicanty = () => {
             <TableRow key={item.key}>
               {(columnKey) => (
                 <TableCell>
-                  {columnKey === "action" ? (
-                    <VacancyAlt item={item} />
-                  ) : columnKey === "status" ? (
-                    <Chip color='success'>{item[columnKey]}</Chip>
-                  ) : columnKey === "cv" ? (
-                    <a
-                      href={`cvs/${item.cv}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  {columnKey === "url" ? (
+                    <Button
+                      onClick={() => openPdfInNewWindow(item.url)}
+                      variant="text"
+                      color="success"
                     >
-                      <u>View CV</u>
-                    </a>
-                  ) : columnKey === "vacancies" ? (
-                    <div>
-                      <Dropdown>
-                        <DropdownTrigger>
-                          <Button
-                            variant="bordered"
-                          >
-                            Vacancy List
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu aria-label="Dynamic Actions" items={item.vacancies}>
-                          {item.vacancies.map((vacancy, index) => (
-                            <DropdownItem key={index}>
-                              <div className="flex">
-                                <div className="ms-2 mt-2">{vacancy.title} | {vacancy.createDate}</div>
-                              </div>
-                            </DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown>
-                    </div>
+                      View CV
+                    </Button>
                   ) : (
                     item[columnKey]
                   )}
@@ -139,8 +139,13 @@ const TableApplicanty = () => {
           initialPage={1}
           page={currentPage}
           onChange={handlePageChange}
-        />...
+        />
       </div>
+      {isSubmitting && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <Spinner size="lg" label="fetching..." color="success" labelColor="success" />
+        </div>
+      )}
     </div>
   );
 };

@@ -28,7 +28,7 @@ const VacancyAlt: React.FC<VacancyAltProps> = ({ item }) => {
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
         placement="top-center"
-        className="min-w-[95vw] max-h-[95vh]"
+        className="min-w-[95vw] max-h-[95vh] overflow-scroll"
       >
         <ModalContent>
           {(onClose) => (

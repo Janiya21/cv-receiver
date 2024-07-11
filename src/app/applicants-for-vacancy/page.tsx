@@ -12,7 +12,7 @@ interface VacancyItem {
   location: string;
   phoneNo: string;
   vacancies: string;
-  cv: string;
+  url: any;
 }
 
 interface ApplicantsForVacancyProps {
@@ -27,6 +27,30 @@ const ApplicantsForVacancy: React.FC<ApplicantsForVacancyProps> = ({ item }) => 
     console.log(item);
     setApplicants(item);
   }, [item]);
+
+  const convertBufferToBlobUrl = (buffer:any) => {
+    const binaryData = base64ToBuffer(buffer);
+    const byteArray = new Uint8Array(buffer);
+    const blob = new Blob([byteArray], { type: "application/pdf" }); // Adjust type as needed
+    return URL.createObjectURL(blob);
+  };
+
+  const base64ToBuffer = (base64: string): Buffer | null => {
+    try {
+      // Decode base64 string to binary data
+      const binaryData = Buffer.from(base64, 'base64');
+      
+      return binaryData;
+    } catch (error) {
+      console.error('Error converting base64 to Buffer:', error);
+      return null;
+    }
+  };
+
+  const openPdfInNewWindow = (pdfUrl:any) => {
+    console.log(pdfUrl);
+    window.open(pdfUrl, "_blank");
+  };
 
   return (
     <div>
@@ -44,13 +68,13 @@ const ApplicantsForVacancy: React.FC<ApplicantsForVacancyProps> = ({ item }) => 
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1"></ModalHeader>
-              <ModalBody>
+              <ModalBody className=" overflow-y-scroll min-h-max max-h-[90vh]">
                 {applicants.map((vacancy, index) => (
                   <div key={vacancy.key}>
                     <span>
                       <div className="max-h-max w-full px-16 flex items-center justify-center dark:bg-gray-900">
                         <div
-                          className="relative w-full px-10 my-8 md:my-16 flex flex-col items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 py-8 border-2 border-dashed border-gray-400 dark:border-gray-400 shadow-lg rounded-lg"
+                          className="relative w-full px-10 my-2 md:my-2 flex flex-col items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 py-8 border-2 border-dashed border-gray-400 dark:border-gray-400 shadow-lg rounded-lg"
                         >
                           <span className="absolute text-xs font-medium top-0 left-0 rounded-br-lg rounded-tl-lg px-2 py-1 bg-green-100 dark:bg-green-300 dark:text-gray-300 border-green-400 dark:border-gray-400 border-b-2 border-r-2 border-dashed ">
                             Applicant {index + 1}
@@ -72,12 +96,11 @@ const ApplicantsForVacancy: React.FC<ApplicantsForVacancyProps> = ({ item }) => 
                                 <b className="text-medium ms-4">Location:</b> {vacancy.location}
                               </p>
                               <a
-                                href={`cvs/${vacancy.cv}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-medium"
+                                onClick={() => openPdfInNewWindow(vacancy.url)}
+                                color="success"
+                                className="cursor-pointer text-sm underline text-green-500"
                               >
-                                <u>View CV</u>
+                                View CV
                               </a>
                             </div>
                             <div className="flex gap-4"></div>

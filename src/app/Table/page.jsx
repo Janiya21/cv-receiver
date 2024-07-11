@@ -4,6 +4,7 @@ import { Table, TableHeader, useDisclosure, TableColumn, ModalContent, TableBody
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@/components/ui/use-toast";
+import { Spinner } from "@nextui-org/react";
 
 const columns = [
   {
@@ -35,12 +36,14 @@ const TableUI = () => {
   const itemsPerPage = 4;
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    setIsSubmitting(true);
     try {
       const positionsRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position");
       if (!positionsRes.ok) {
@@ -60,6 +63,8 @@ const TableUI = () => {
       setFilteredRows(formattedRows); // Initially set filtered rows to all rows
     } catch (error) {
       console.error('Error fetching positions:', error);
+    }finally {
+      setIsSubmitting(false); // Reset isSubmitting after submission attempt
     }
   };
 
@@ -270,6 +275,11 @@ const TableUI = () => {
           onChange={handlePageChange}
         />
       </div>
+      {isSubmitting && (
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+                          <Spinner size="lg" label="fetching..." color="success" labelColor="success" />
+                        </div>
+                      )}
     </div>
   );
 };

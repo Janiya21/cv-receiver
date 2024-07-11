@@ -10,6 +10,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 // import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Spinner } from "@nextui-org/react";
 
 const columns = [
   { key: "title", label: "TITLE" },
@@ -31,6 +32,7 @@ const TableVacancy = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editData, setEditData] = useState<any>({ key: "", title: "", description: "", endDate: "" });
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const itemsPerPage = 4;
 
   useEffect(() => {
@@ -39,8 +41,9 @@ const TableVacancy = () => {
   }, []);
 
   const fetchPositions = async () => {
+    setIsSubmitting(true);
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position");
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "api/position");
       const data = await response.json();
       const positionOptions = data.map((position: { _id: string; name: string }) => ({
         value: position._id,
@@ -49,19 +52,21 @@ const TableVacancy = () => {
       setPositions(positionOptions);
     } catch (error) {
       console.error("Error fetching positions:", error);
+    } finally {
+      setIsSubmitting(false); // Reset isSubmitting after submission attempt
     }
   };
 
   const fetchData = async () => {
     try {
-      const vacancyRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/vacancy");
+      const vacancyRes = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "api/vacancy");
       if (!vacancyRes.ok) {
         throw new Error(`HTTP error! status: ${vacancyRes.status}`);
       }
       const vacancyData = await vacancyRes.json();
       console.log("Vacancy data:", vacancyData);
 
-      const formattedRows = vacancyData.map((vacancy:any) => ({
+      const formattedRows = vacancyData.map((vacancy: any) => ({
         key: vacancy._id,
         title: vacancy.title,
         applicants: vacancy.applicants,
@@ -79,19 +84,38 @@ const TableVacancy = () => {
     }
   };
 
-  const handleEdit = (key:any) => {
-    const rowData = rows.find((row:any) => row.key === key);
+  const handleEdit = (key: any) => {
+    const rowData = rows.find((row: any) => row.key === key);
     setEditData(rowData);
     setIsEditModalOpen(true);
   };
 
-  const handleEditChange = (value:any, name:any) => {
-    setEditData((prevState:any) => ({ ...prevState, [name]: value }));
+  const handleEditChange = (value: any, name: any) => {
+    if (name === 'endDate') {
+      let parsedDate;
+      if (typeof value === 'string') {
+        parsedDate = new Date(value);
+      } else if (value instanceof Date) {
+        parsedDate = value;
+      }
+  
+      if (parsedDate instanceof Date && !isNaN(parsedDate.getTime())) {
+        const month = parsedDate.getMonth() + 1;
+        const day = parsedDate.getDate();
+        const year = parsedDate.getFullYear();
+        value = `${month}/${day}/${year}`;
+      } else {
+        console.error('Invalid date:', value);
+        return;
+      }
+    }
+  
+    setEditData((prevState: any) => ({ ...prevState, [name]: value }));
   };
 
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`api/vacancy`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `api/vacancy`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +149,7 @@ const TableVacancy = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+`api/vacancy`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `api/vacancy`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -161,11 +185,11 @@ const TableVacancy = () => {
     }
   };
 
-  const handlePageChange = (page:any) => {
+  const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
 
-  const handleShowConfirmation = (key:any) => {
+  const handleShowConfirmation = (key: any) => {
     setShowConfirmation(true);
     setDeleteKey(key);
   };
@@ -175,14 +199,14 @@ const TableVacancy = () => {
     setDeleteKey(null);
   };
 
-  const handleFilterChange = (e:any) => {
+  const handleFilterChange = (e: any) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const filteredRows = rows.filter((row:any) => {
+  const filteredRows = rows.filter((row: any) => {
     const matchesTitle = row.title.toLowerCase().includes(filters.title.toLowerCase());
-    const matchesLocation = row.location.some((loc:any) => loc.toLowerCase().includes(filters.location.toLowerCase()));
+    const matchesLocation = row.location.some((loc: any) => loc.toLowerCase().includes(filters.location.toLowerCase()));
     const matchesPosition = row.position.toLowerCase().includes(filters.position.toLowerCase());
     return matchesTitle && matchesLocation && matchesPosition;
   });
@@ -231,7 +255,7 @@ const TableVacancy = () => {
           {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
         </TableHeader>
         <TableBody items={selectedRows}>
-          {(item:any) => (
+          {(item: any) => (
             <TableRow key={item.key}>
               {(columnKey) => (
                 <TableCell>
@@ -302,7 +326,7 @@ const TableVacancy = () => {
                   value={editData.description}
                   onChange={(content) => handleEditChange(content, "description")}
                 />
-                 <Input
+                <Input
                   label="End Date"
                   name="endDate"
                   value={editData.endDate}
@@ -320,7 +344,11 @@ const TableVacancy = () => {
             </>
           )}
         </ModalContent>
-      </Modal>
+      </Modal>{isSubmitting && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+          <Spinner size="lg" label="fetching..." color="success" labelColor="success" />
+        </div>
+      )}
     </div>
   );
 };
