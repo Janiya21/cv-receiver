@@ -28,8 +28,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
         <NextUIProvider>
           {children}
-          <div className="absolute bg-green-800 w-full py-4 bottom-0 flex justify-center">
-            <h1 className="text-gray-200">All Right Reserved 2024 - EWB IT</h1>
+          <div className="relative bg-green-800 w-full bottom-0 flex justify-center">
+            <h1 className="text-gray-200 py-3">All Right Reserved 2024 - EWB IT</h1>
           </div>
         </NextUIProvider>
         <Toaster />
