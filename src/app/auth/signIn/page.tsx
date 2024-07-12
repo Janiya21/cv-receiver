@@ -91,7 +91,7 @@ const SignInPage = () => {
                   onClick={handleGoogleSignIn}
                   className="w-full bg-white text-green-600 border-2 border-green-300 py-2 px-4 rounded-md hover:bg-gray-100 focus:outline-none focus:bg-white mt-4"
                 >
-                  Sign In with Google
+                  Sign In with Microsoft
                 </button>
               </div>
             </div>

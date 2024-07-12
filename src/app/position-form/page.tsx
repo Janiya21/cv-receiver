@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from "@nextui-org/react";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,9 +15,15 @@ export default function PositionForm() {
     description: "",
   });
 
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setFormErrors({ name: "", description: "" }); // Reset validation errors
+  };
+
   const handleSubmit = async () => {
     // Perform validation
-    const errors: any = {};
+    const errors:any = {};
     if (!name) {
       errors.name = "Name is required";
     }
@@ -36,7 +42,7 @@ export default function PositionForm() {
     };
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL+"api/position", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "api/position", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,10 +60,11 @@ export default function PositionForm() {
       });
       console.log("Position created successfully:", await response.json());
       onOpenChange(); // Close the modal
-      window.location.reload();
+      resetForm(); // Reset the form fields
+      window.location.reload(); // Optionally reload the page
     } catch (error) {
       toast({
-        description: "Error Creating Positions!",
+        description: "Error Creating Position!",
         variant: "destructive",
       });
       console.error("Error creating position:", error);
@@ -84,7 +91,7 @@ export default function PositionForm() {
                   onChange={(e) => setName(e.target.value)}
                   className={formErrors.name ? "border-red-500" : ""}
                 />
-                {formErrors.name && <span className="text-red-600">{formErrors.name}</span>}
+                {formErrors.name && <span className="text-red-600 text-tiny">{formErrors.name}</span>}
                 <Input
                   label="Description"
                   placeholder="Enter Description"
@@ -93,10 +100,10 @@ export default function PositionForm() {
                   onChange={(e) => setDescription(e.target.value)}
                   className={formErrors.description ? "border-red-500" : ""}
                 />
-                {formErrors.description && <span className="text-red-600">{formErrors.description}</span>}
+                {formErrors.description && <span className="text-red-600 text-tiny">{formErrors.description}</span>}
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
+                <Button color="danger" variant="flat" onPress={() => { onClose(); resetForm(); }}>
                   Close
                 </Button>
                 <Button color="primary" onPress={handleSubmit}>
