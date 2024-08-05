@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Button, DateValue, Input, DatePicker, Chip } from "@nextui-org/react";
-import ReactQuill from "react-quill";
 import Select, { MultiValue, SingleValue } from 'react-select';
 import "react-quill/dist/quill.snow.css";
 import geoData from "../../../public/cities-by-district.json";
 import { useRouter } from "next/navigation"; 
 import { useToast } from "@/components/ui/use-toast";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 interface Option {
   value: string;
@@ -120,7 +121,10 @@ export default function VacancyForm() {
         description: "Vacancy Created Successful!",
         variant: "default",
       });
-      window.location.reload();
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
+      
     } catch (error) {
       toast({
         description: "Error Creating Vacancy!",

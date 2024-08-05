@@ -49,14 +49,17 @@ const ApplicantsForVacancy: React.FC<ApplicantsForVacancyProps> = ({ item }) => 
 
   const openPdfInNewWindow = (pdfUrl:any) => {
     console.log(pdfUrl);
-    window.open(pdfUrl, "_blank");
+    if (typeof window !== 'undefined') {
+      window.open(pdfUrl, "_blank");
+    }
+   
   };
 
   return (
     <div>
       <Button className="bg-transparent w-20" onPress={onOpen} isIconOnly>
         <Avatar className="" src="https://www.svgrepo.com/show/192244/man-user.svg" />
-        <span className="ms-3"> {applicants.length}</span>
+        <span className="ms-3"> {applicants?.length}</span>
       </Button>
       <Modal
         isOpen={isOpen}

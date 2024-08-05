@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:debug": "NEXT_PUBLIC_LOG_LEVEL=debug next build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
@@ -21,6 +22,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cv-receiver": "file:",
     "date-fns": "^3.6.0",
     "font-awesome": "^4.7.0",
     "framer-motion": "^11.2.12",

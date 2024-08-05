@@ -13,7 +13,10 @@ const SignInPage = () => {
       setError("Failed to sign in with Google");
       console.error("Failed to sign in with Google:", result.error);
     } else {
-      window.location.href = "/";
+      
+      if (typeof window !== 'undefined') {
+        window.location.href = "/";
+      }
     }
   };
 
@@ -50,7 +53,10 @@ const SignInPage = () => {
                       setError("Invalid username or password");
                       console.error("Failed to sign in:", result.error);
                     } else {
-                      window.location.href = "/";
+                      if (typeof window !== 'undefined') {
+                        window.location.href = "/";
+                      }
+                     
                     }
                   }}
                 >

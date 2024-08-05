@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   await dbConnect();
   try {
+    await Vacancy.find({});
     const applications = await Applicant.find({}).populate("vacancies")
     // .populate('vacancies');
       return NextResponse.json(applications, { status: 200 });

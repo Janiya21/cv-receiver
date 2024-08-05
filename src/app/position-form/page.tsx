@@ -61,7 +61,10 @@ export default function PositionForm() {
       console.log("Position created successfully:", await response.json());
       onOpenChange(); // Close the modal
       resetForm(); // Reset the form fields
-      window.location.reload(); // Optionally reload the page
+     
+      if (typeof window !== 'undefined') {
+        window.location.reload(); // Optionally reload the page
+      }
     } catch (error) {
       toast({
         description: "Error Creating Position!",

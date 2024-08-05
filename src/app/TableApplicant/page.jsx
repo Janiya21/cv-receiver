@@ -99,7 +99,10 @@ const TableApplicanty = () => {
 
   const openPdfInNewWindow = (pdfUrl) => {
     console.log(pdfUrl);
-    window.open(pdfUrl, "_blank");
+    if (typeof window !== 'undefined') {
+      window.open(pdfUrl, "_blank");
+    }
+    
   };
 
   return (

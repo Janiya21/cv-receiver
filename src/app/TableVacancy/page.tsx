@@ -6,11 +6,12 @@ import VacancyList from "../applicants-for-vacancy/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@/components/ui/use-toast";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 // import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Spinner } from "@nextui-org/react";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const columns = [
   { key: "title", label: "TITLE" },
