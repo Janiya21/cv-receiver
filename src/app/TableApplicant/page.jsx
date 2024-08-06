@@ -54,7 +54,7 @@ const TableApplicanty = () => {
   const [rows, setRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: session, status } = useSession();
+  const session = useSession();
   const router = useRouter();
 
   useEffect(() => {

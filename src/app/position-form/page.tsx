@@ -11,11 +11,10 @@ export default function PositionForm() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const { toast } = useToast();
-  const { data: session, status } = useSession();
+  const session = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return; // Do nothing while loading
     if (!session) {
       console.log("no authenticated!");
       

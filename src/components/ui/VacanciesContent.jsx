@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function VacanciesContent() {
   const [showVacancyForm, setShowVacancyForm] = useState(false);
-  const { data: session, status } = useSession();
+  const session = useSession();
   const router = useRouter();
 
   useEffect(() => {
