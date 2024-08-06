@@ -7,19 +7,6 @@ import { Image } from "@nextui-org/image";
 const SignInPage = () => {
   const [error, setError] = useState<string | null>(null);
 
-  const handleGoogleSignIn = async () => {
-    const result = await signIn("google", { redirect: false });
-    if (result?.error) {
-      setError("Failed to sign in with Google");
-      console.error("Failed to sign in with Google:", result.error);
-    } else {
-      
-      if (typeof window !== 'undefined') {
-        window.location.href = "/";
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 py-3 flex flex-col justify-center sm:py-12">
       <div className="relative  sm:max-w-xl sm:mx-auto">
@@ -93,12 +80,6 @@ const SignInPage = () => {
                     </button>
                   </div>
                 </form>
-                <button
-                  onClick={handleGoogleSignIn}
-                  className="w-full bg-white text-green-600 border-2 border-green-300 py-2 px-4 rounded-md hover:bg-gray-100 focus:outline-none focus:bg-white mt-4"
-                >
-                  Sign In with Microsoft
-                </button>
               </div>
             </div>
           </div>
