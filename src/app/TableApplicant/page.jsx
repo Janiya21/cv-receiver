@@ -13,7 +13,6 @@ import {
 } from "@nextui-org/react";
 import { Spinner } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const columns = [
@@ -68,7 +67,7 @@ const TableApplicanty = () => {
       console.log("authenticated!");
     }
   }, [session, status, router]);
-  
+
   const itemsPerPage = 4;
 
   useEffect(() => {
