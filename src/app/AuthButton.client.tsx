@@ -4,10 +4,18 @@ import {useSession} from "next-auth/react";
 
 import {signIn, signOut} from "@/auth/helper";
 import {Button,Tooltip} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AuthButtonClient(){
     const session = useSession();
+    const router = useRouter();
 
+    useEffect(() => {
+        if (!session) {
+            router.push(`/auth/signIn?callbackUrl=${encodeURIComponent(window.location.href)}`);
+        }
+    }, [session, router]);
     return session?.data?.user ? (
               
         <Tooltip
