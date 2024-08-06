@@ -58,7 +58,7 @@ const TableApplicanty = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return; // Do nothing while loading
+    
     if (!session) {
       console.log("not authenticated!");
       
