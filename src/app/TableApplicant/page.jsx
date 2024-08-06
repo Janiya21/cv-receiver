@@ -66,7 +66,7 @@ const TableApplicanty = () => {
     }else{
       console.log("authenticated!");
     }
-  }, [session, status, router]);
+  }, [session, router]);
 
   const itemsPerPage = 4;
 

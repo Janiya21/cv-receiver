@@ -22,7 +22,7 @@ export default function PositionForm() {
     }else{
       console.log("authenticated!");
     }
-  }, [session, status, router]);
+  }, [session, router]);
 
   // State for form validation errors
   const [formErrors, setFormErrors] = useState({

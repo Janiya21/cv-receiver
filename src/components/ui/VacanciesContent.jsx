@@ -23,7 +23,7 @@ export default function VacanciesContent() {
     }else{
       console.log("authenticated!");
     }
-  }, [session, status, router]);
+  }, [session, router]);
 
   const handleCreateVacancyClick = () => {
     if(showVacancyForm){
