@@ -2,12 +2,28 @@
 import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from "@nextui-org/react";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function PositionForm() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const { toast } = useToast();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return; // Do nothing while loading
+    if (!session) {
+      console.log("no authenticated!");
+      
+      router.push(`/auth/signIn?callbackUrl=${encodeURIComponent(window.location.href)}`);
+    }else{
+      console.log("authenticated!");
+    }
+  }, [session, status, router]);
 
   // State for form validation errors
   const [formErrors, setFormErrors] = useState({

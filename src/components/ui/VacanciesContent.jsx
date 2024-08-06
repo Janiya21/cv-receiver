@@ -5,9 +5,25 @@ import { useState } from 'react';
 import VacancyForm from "../../app/vacancy-form/page"; 
 import { Button, Chip } from "@nextui-org/react";
 import TableVacancy from '@/app/TableVacancy/page';
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function VacanciesContent() {
   const [showVacancyForm, setShowVacancyForm] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return; // Do nothing while loading
+    if (!session) {
+      console.log("not authenticated!");
+      
+      router.push(`/auth/signIn?callbackUrl=${encodeURIComponent(window.location.href)}`);
+    }else{
+      console.log("authenticated!");
+    }
+  }, [session, status, router]);
 
   const handleCreateVacancyClick = () => {
     if(showVacancyForm){
