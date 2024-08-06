@@ -12,8 +12,6 @@ import {
   Pagination,
 } from "@nextui-org/react";
 import { Spinner } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 const columns = [
   {
@@ -54,19 +52,6 @@ const TableApplicanty = () => {
   const [rows, setRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const session = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    
-    if (!session) {
-      console.log("not authenticated!");
-      
-      router.push(`/auth/signIn?callbackUrl=${encodeURIComponent(window.location.href)}`);
-    }else{
-      console.log("authenticated!");
-    }
-  }, [session, router]);
 
   const itemsPerPage = 4;
 
