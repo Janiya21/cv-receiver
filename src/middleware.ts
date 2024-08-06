@@ -7,6 +7,7 @@ export const config = {
 
 export default auth((req)=>{
     const reqUrl = new URL(req.url);
+    
     if(!req.auth && reqUrl?.pathname !== "/auth/signIn"){
         return NextResponse.redirect(
             new URL(

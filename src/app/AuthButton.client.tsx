@@ -12,6 +12,7 @@ export default function AuthButtonClient(){
     const router = useRouter();
 
     useEffect(() => {
+        console.log(session);
         if (!session) {
             console.log('not authenticated');
             router.push(`/auth/signIn?callbackUrl=${encodeURIComponent(window.location.href)}`);
